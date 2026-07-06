@@ -1,0 +1,4 @@
+{
+  "eua": ["NVDA", "AAPL", "MSFT", "AMZN", "GOOGL", "AVGO", "META", "TSLA", "BRK-B", "WMT"],
+  "brasil": ["PETR4", "ITUB4", "VALE3", "BPAC11", "ABEV3", "BBDC4", "WEGE3", "BBAS3", "ITSA4", "SANB11"]
+}
