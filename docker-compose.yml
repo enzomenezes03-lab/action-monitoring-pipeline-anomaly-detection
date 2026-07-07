@@ -44,6 +44,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.spark
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - ./src:/opt/spark_apps
       - ./jars:/opt/spark_jars
