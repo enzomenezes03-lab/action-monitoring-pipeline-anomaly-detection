@@ -40,5 +40,13 @@ services:
     environment:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
     command: db init
+  spark:
+    build:
+      context: .
+      dockerfile: Dockerfile.spark
+    volumes:
+      - ./src:/opt/spark_apps
+      - ./jars:/opt/spark_jars
+    command: tail -f /dev/null
 volumes:
   postgres_data:
