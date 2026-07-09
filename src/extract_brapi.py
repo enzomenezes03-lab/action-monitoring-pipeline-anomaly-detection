@@ -32,8 +32,11 @@ def get_connection():
 def load_to_bronze(table_name, con, df):
     df.to_sql(table_name, con, schema='bronze', if_exists='replace')
 
-if __name__ == "__main__":
+def main():
     df = extract_brapi_data()
     con = get_connection()
     load_to_bronze('brapi', con, df)
+
+if __name__ == "__main__":
+    main()
 

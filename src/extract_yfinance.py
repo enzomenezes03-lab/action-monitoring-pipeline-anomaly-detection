@@ -22,7 +22,10 @@ def get_connection():
 def load_to_bronze(table_name, con, df):
     df.to_sql(table_name, con, schema='bronze', if_exists='replace')
 
-if __name__ == '__main__':
+def main():
     con = get_connection()
     df = extract_yfinance_data()
     load_to_bronze('yfinance', con, df)
+
+if __name__ == '__main__':
+    main()

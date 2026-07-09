@@ -70,6 +70,9 @@ def model(engine):
             FROM ready_features rf'''))
         conn.commit()
 
-if __name__ == '__main__':
+def main():
     con = get_connection()
     model(con)
+
+if __name__ == '__main__':
+    main()
