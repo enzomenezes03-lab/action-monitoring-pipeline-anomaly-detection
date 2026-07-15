@@ -1,10 +1,8 @@
 from sqlalchemy import create_engine, text
-import dotenv
 import os
 
 def get_connection():
-    dotenv.load_dotenv()
-    con_path = f'postgresql+psycopg2://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@localhost:5432/{os.getenv("POSTGRES_DB")}'
+    con_path = f'postgresql+psycopg2://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@postgres:5432/{os.getenv("POSTGRES_DB")}'
     con = create_engine(con_path)
     return con
 
@@ -42,14 +40,14 @@ def model(engine):
             pre_features AS (
             SELECT
             lm.*,
-            ((lm.sum_daily_market_variation_pct - lm.daily_variation_pct ) / (lm.count_daily_market_variation_pct - 1)) AS exclusive_daily_market_variation_avg,
-            ROUND(CAST((lm.daily_variation_pct - lm.rolling_avg_variation) / lm.rolling_stddev_variation AS decimal), 2) AS self_zscore
+            ((lm.sum_daily_market_variation_pct - lm.daily_variation_pct ) / NULLIF(lm.count_daily_market_variation_pct - 1, 0)) AS exclusive_daily_market_variation_avg,
+            ROUND(CAST((lm.daily_variation_pct - lm.rolling_avg_variation) / NULLIF(lm.rolling_stddev_variation, 0) AS decimal), 2) AS self_zscore
             FROM last_metrics lm
             ),
             midle_features AS (
             SELECT 
             pf.*,
-            (pf.sum_squared_daily_market_variation_pct - POWER(pf.daily_variation_pct, 2)) / (pf.count_daily_market_variation_pct - 1) - POWER(pf.exclusive_daily_market_variation_avg, 2) AS exclusive_variancy
+            (pf.sum_squared_daily_market_variation_pct - POWER(pf.daily_variation_pct, 2)) / NULLIF(pf.count_daily_market_variation_pct - 1, 0) - POWER(pf.exclusive_daily_market_variation_avg, 2) AS exclusive_variancy
             FROM pre_features pf
             ),
             ready_features AS (
@@ -66,9 +64,8 @@ def model(engine):
             rf.daily_variation_pct, 
             rf.self_zscore,
             rf.rolling_observation,
-            ROUND(CAST((rf.daily_variation_pct - rf.exclusive_daily_market_variation_avg ) / rf.exclusive_market_stddev AS decimal), 2) AS daily_market_zscore
+            ROUND(CAST((rf.daily_variation_pct - rf.exclusive_daily_market_variation_avg ) / NULLIF(rf.exclusive_market_stddev, 0) AS decimal), 2) AS daily_market_zscore
             FROM ready_features rf'''))
-        conn.commit()
 
 def main():
     con = get_connection()

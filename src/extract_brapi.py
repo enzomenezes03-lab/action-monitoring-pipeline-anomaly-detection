@@ -1,16 +1,17 @@
 import pandas as pd
 from sqlalchemy import create_engine
 import os
-import dotenv
 import json
 import requests as rq
 
+DIR = os.path.dirname(__file__)
+TICKERS_PATH = os.path.join(DIR, "..", "config", "tickers.json")
+
 def extract_brapi_data():
-    with open('config/tickers.json', 'r') as arq_leitura:
+    with open(TICKERS_PATH, 'r') as arq_leitura:
         tickers = json.load(arq_leitura)
         tickers_br = tickers["brasil"]
 
-    dotenv.load_dotenv()
     list_dfs = []
     for ticker in tickers_br:
         http_answer = rq.get(f'https://brapi.dev/api/v2/stocks/historical?symbols={ticker}&range=3mo&interval=1d',
@@ -25,7 +26,7 @@ def extract_brapi_data():
     return final_df
 
 def get_connection():
-    con_path = f'postgresql+psycopg2://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@localhost:5432/{os.getenv("POSTGRES_DB")}'
+    con_path = f'postgresql+psycopg2://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@postgres:5432/{os.getenv("POSTGRES_DB")}'
     con = create_engine(con_path)
     return con
 
