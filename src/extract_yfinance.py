@@ -11,8 +11,10 @@ def extract_yfinance_data():
         tickers = json.load(arq_leitura)
         eua_tickers = tickers["eua"]
     df = yf.download(eua_tickers, period='12mo')
+    if df.empty:
+        raise ValueError("Download carregou um DataFrame vazio!")
     df = df.stack(future_stack=True)
-    df.index.names = ['date', 'ticker']  # nomeia os dois níveis do índice
+    df.index.names = ['date', 'ticker']
     df = df.reset_index()
     return df
 
