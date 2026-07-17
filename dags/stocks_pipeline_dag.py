@@ -12,6 +12,7 @@ sys.path.append(SRC_PATH)
 from extract_brapi import main as main_brapi
 from extract_yfinance import main as main_yfinance
 from modeling_gold import main as main_gold
+from anomaly_detection import main as main_anomaly
 
 default_args = {
     "retries": 2,
@@ -46,4 +47,9 @@ with DAG(
         python_callable=main_gold,
     )
 
-    [task1, task2] >> task3 >> task4
+    task5 = PythonOperator(
+        task_id="anomaly_detection",
+        python_callable=main_anomaly
+    )
+
+    [task1, task2] >> task3 >> task4 >> task5
