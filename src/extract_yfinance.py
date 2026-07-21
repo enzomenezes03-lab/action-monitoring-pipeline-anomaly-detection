@@ -1,5 +1,5 @@
 import yfinance as yf
-from sqlalchemy import create_engine
+from db_connection import get_connection
 import json
 import os
 
@@ -17,11 +17,6 @@ def extract_yfinance_data():
     df.index.names = ['date', 'ticker']
     df = df.reset_index()
     return df
-
-def get_connection():
-    con_path = f'postgresql+psycopg2://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@postgres:5432/{os.getenv("POSTGRES_DB")}'
-    con = create_engine(con_path)
-    return con
 
 def load_to_bronze(table_name, con, df):
     df.to_sql(table_name, con, schema='bronze', if_exists='replace')

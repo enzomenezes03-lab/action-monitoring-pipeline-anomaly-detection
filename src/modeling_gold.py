@@ -1,10 +1,5 @@
-from sqlalchemy import create_engine, text
-import os
-
-def get_connection():
-    con_path = f'postgresql+psycopg2://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@postgres:5432/{os.getenv("POSTGRES_DB")}'
-    con = create_engine(con_path)
-    return con
+from db_connection import get_connection
+from sqlalchemy import text
 
 def model(engine):
     with engine.connect() as conn:

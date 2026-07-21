@@ -9,7 +9,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init-db:/docker-entrypoint-initdb.d
   scheduler:
     build:
       context: .
@@ -20,9 +19,9 @@ services:
     environment:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       AIRFLOW__WEBSERVER__SECRET_KEY: 'uma_chave_qualquer_fixa_123'
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      SUPABASE_HOST: ${SUPABASE_HOST}
+      SUPABASE_USER: ${SUPABASE_USER}
+      SUPABASE_PASSWORD: ${SUPABASE_PASSWORD}
       BRAPI_TOKEN: ${BRAPI_TOKEN}
     volumes:
       - ./dags:/opt/airflow/dags
@@ -40,9 +39,9 @@ services:
     environment:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       AIRFLOW__WEBSERVER__SECRET_KEY: 'uma_chave_qualquer_fixa_123'
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      SUPABASE_HOST: ${SUPABASE_HOST}
+      SUPABASE_USER: ${SUPABASE_USER}
+      SUPABASE_PASSWORD: ${SUPABASE_PASSWORD}
       BRAPI_TOKEN: ${BRAPI_TOKEN}
     ports:
       - "8080:8080"
@@ -63,10 +62,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.spark
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      SUPABASE_HOST: ${SUPABASE_HOST}
+      SUPABASE_USER: ${SUPABASE_USER}
+      SUPABASE_PASSWORD: ${SUPABASE_PASSWORD}
     volumes:
       - ./src:/opt/spark_apps
       - ./jars:/opt/spark_jars

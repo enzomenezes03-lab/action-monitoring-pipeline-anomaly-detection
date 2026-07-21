@@ -1,12 +1,6 @@
-from sqlalchemy import create_engine
+from db_connection import get_connection
 from sklearn.ensemble import IsolationForest
 import pandas as pd
-import os
-
-def get_connection():
-    con_path = f'postgresql+psycopg2://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@postgres:5432/{os.getenv("POSTGRES_DB")}'
-    con = create_engine(con_path)
-    return con
 
 def load_df(connection):
     df = pd.read_sql('''SELECT

@@ -1,16 +1,16 @@
 import streamlit as st
 import plotly.express as px
-from sqlalchemy import create_engine
+import sys
 import pandas as pd
 import dotenv
 import os
 import plotly.graph_objects as go
 
-def get_connection():
-    dotenv.load_dotenv()
-    con_path = f'postgresql+psycopg2://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@localhost:5432/{os.getenv("POSTGRES_DB")}'
-    con = create_engine(con_path)
-    return con
+DIR = os.path.dirname(__file__)
+SRC_PATH = os.path.join(DIR, "..", "src")
+sys.path.append(SRC_PATH)
+
+from db_connection import get_connection
 
 def load_dashboard_data(connection):
     df = pd.read_sql('''SELECT

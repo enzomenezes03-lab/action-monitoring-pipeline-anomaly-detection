@@ -1,5 +1,5 @@
 import pandas as pd
-from sqlalchemy import create_engine
+from db_connection import get_connection
 import os
 import json
 import requests as rq
@@ -24,11 +24,6 @@ def extract_brapi_data():
     final_df = pd.concat(list_dfs)
 
     return final_df
-
-def get_connection():
-    con_path = f'postgresql+psycopg2://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@postgres:5432/{os.getenv("POSTGRES_DB")}'
-    con = create_engine(con_path)
-    return con
 
 def load_to_bronze(table_name, con, df):
     df.to_sql(table_name, con, schema='bronze', if_exists='replace')

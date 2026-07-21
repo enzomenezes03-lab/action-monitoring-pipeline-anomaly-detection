@@ -10,10 +10,10 @@ spark = SparkSession.builder \
 
 def read_bronze_table(spark_con, table_name):
     df = spark_con.read.format("jdbc") \
-        .option("url", f"jdbc:postgresql://postgres:5432/{os.getenv('POSTGRES_DB')}") \
+        .option("url", f"jdbc:postgresql://{os.getenv('SUPABASE_HOST')}:5432/postgres") \
         .option("dbtable", f"bronze.{table_name}") \
-        .option("user", f"{os.getenv('POSTGRES_USER')}") \
-        .option("password", f"{os.getenv('POSTGRES_PASSWORD')}") \
+        .option("user", f"{os.getenv('SUPABASE_USER')}") \
+        .option("password", f"{os.getenv('SUPABASE_PASSWORD')}") \
         .option("driver", "org.postgresql.Driver") \
         .load()
 
@@ -39,10 +39,10 @@ def transform(df_yfinance, df_brapi):
 def load_to_silver(table_name, df):
     df.write \
         .format("jdbc") \
-        .option("url", f"jdbc:postgresql://postgres:5432/{os.getenv('POSTGRES_DB')}") \
+        .option("url", f"jdbc:postgresql://{os.getenv('SUPABASE_HOST')}:5432/postgres") \
         .option("dbtable", f"silver.{table_name}") \
-        .option("user", f"{os.getenv('POSTGRES_USER')}") \
-        .option("password", f"{os.getenv('POSTGRES_PASSWORD')}") \
+        .option("user", f"{os.getenv('SUPABASE_USER')}") \
+        .option("password", f"{os.getenv('SUPABASE_PASSWORD')}") \
         .option("driver", "org.postgresql.Driver") \
         .mode("overwrite") \
         .save()
